@@ -37,7 +37,15 @@ def analyse_email(email_body):
         """
     
     response = client.models.generate_content(model=MY_GEMINI_MODEL, contents=prompt)
-    content = response.text or ""
+    content = response.text.strip()
+
+    if content.startswith("```"):
+        # fixing by removing 1st line (```json) nd last line(```)....
+        lines = content.split("\n")
+        lines = [l for l in lines if not l.strip().startswith("```")]
+        content = "\n".join(lines).strip() 
+
+
 
     try:
         return json.loads(content)
