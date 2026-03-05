@@ -1,41 +1,42 @@
 import os
-import json
-import google.generativeai as genai
+import   json
+from google import  genai
 from dotenv import load_dotenv
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+MY_GEMINI_MODEL = "gemini-2.5-flash-lite" 
 def analyse_email(email_body):
     prompt=f"""
-        Analyze the following cutomer email and return a STRICT JSON.
-        Allowerd intents:
-        - refund
-        - complain
-        - delivery issue
+        Analyze the following customer email and return a STRICT JSON.
+        Allowed intents:
+        -refund
+        -complain
+        -delivery issue
         - cancellation
-        - general inquiry
+        -general inquiry
+        --promotional
         Sentiment must be:
         - positive
-        - neutral
-        - negative
+        -neutral
+        -negative
         Priority rules:
-        - negative sentiment = high
-        - neutral = medium
-        - positive = low
+        -negative sentiment= high
+        - neutral= medium
+        -positive= low
         Return format for json:
-        {{{
+        {{
             "intent":"...",
             "sentiment":"...",
             "priority":"...",
             "draft_reply":"..."
-        }}}
+        }}
         Email:
         {email_body}
         """
     
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MY_GEMINI_MODEL, contents=prompt)
     content = response.text or ""
 
     try:

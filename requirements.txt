@@ -4,4 +4,4 @@ bcrypt
 gunicorn
 openai
 python-dotenv
-google-generativeai
+google-genai
