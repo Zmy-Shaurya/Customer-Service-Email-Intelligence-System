@@ -1,10 +1,11 @@
 import os
 import json
-from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 def analyse_email(email_body):
     prompt=f"""
@@ -34,22 +35,15 @@ def analyse_email(email_body):
         {email_body}
         """
     
-    response = client.chat.completions.create(
-        model="gpt-40-mini",
-        messages=[
-            {"role":"system","content":"You are a professional curtomer support AI."},
-            {"role":"user","content":prompt}
-        ],temperature=0
-
-    )
-    content = response.coices[0].message.content
+    response = model.generate_content(prompt)
+    content = response.text or ""
 
     try:
         return json.loads(content)
     except json.JSONDecodeError:
-        return{
-            "intent": "General Inquiry",
-                "sentiment": "Neutral",
-                "priority": "Medium",
-                "draft_reply": "Thank you for reaching out. Our support team will get back to you shortly."
+        return {
+            "intent": "general inquiry",
+            "sentiment": "neutral",
+            "priority": "medium",
+            "draft_reply": "Thank you for reaching out. Our support team will get back to you shortly."
         }
