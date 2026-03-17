@@ -4,6 +4,10 @@ import threading
 from ai_service import analyse_email
 import logging
 from dotenv import load_dotenv
+from gmail_service import fetch_unread_emails
+
+MAX_AI_THREADS_PER_SYNC = 10
+
 load_dotenv()
 
 logging.basicConfig(
@@ -24,29 +28,32 @@ with app.app_context():
 # --------------------------------------------------------------------------------
 @app.route('/', methods=["GET","POST"])
 def home():
-    if request.method=="POST":
-        customer_email = request.form["customer_email"]
-        subject = request.form["subject"]
-        body = request.form["body"]
+    if request.method == "POST":
+        customer_email = request.form.get("customer_email", "").strip()
+        subject = request.form.get("subject", "").strip()
+        body = request.form.get("body", "").strip()
 
-        ai_result=  analyse_email(body)
+        if not customer_email or not subject or not body:
+            logging.error("Missing form data in home POST request")
+            return redirect(url_for("home"))
 
-        new_ticket= EmailTicket(
+        new_ticket = EmailTicket(
             customer_email=customer_email,
             subject=subject,
-            body=body,
-            intent=ai_result["intent"],
-            sentiment=ai_result["sentiment"],
-            priority=ai_result["priority"],
-            ai_draft_reply=ai_result["draft_reply"]
+            body=body
         )
         db.session.add(new_ticket)
         db.session.commit()
-        thread = threading.Thread(target=process_ticket_ai, args=(new_ticket.id,))
+
+        thread = threading.Thread(
+            target=process_ticket_ai,
+            args=(new_ticket.id,),
+            daemon=True
+        )
         thread.start()
-        logging.info(f"New ticket created with ID: {new_ticket.id} and AI analysis started in background thread.")
+
+        logging.info(f"New ticket created with ID: {new_ticket.id}")
         return redirect(url_for("dashboard"))
-    logging.error("Failed to create ticket: Missing form data.")
 
     return render_template("index.html")
 
@@ -86,29 +93,68 @@ def analytics():
 
 # --------------------------------------------------------------------------------
 def process_ticket_ai(ticket_id):
+    with app.app_context():
+        ticket = EmailTicket.query.get(ticket_id)
 
-    ticket = EmailTicket.query.get(ticket_id)
+        if not ticket:
+            return
 
-    if not ticket:
-        return
+        try:
+            result = analyse_email(ticket.body)
 
+            ticket.intent = result["intent"]
+            ticket.sentiment = result["sentiment"]
+            ticket.priority = result["priority"]
+            ticket.ai_draft_reply = result["draft_reply"]
+
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"AI Processing Error: {e}")
+
+@app.route("/sync")
+@app.route("/sync-gmail")
+def sync_emails():
     try:
-        result = analyze_email(ticket.body)
-
-        ticket.intent = result["intent"]
-        ticket.sentiment = result["sentiment"]
-        ticket.priority = result["priority"]
-        ticket.ai_draft_reply = result["draft_reply"]
-
-        db.session.commit()
-
+        emails = fetch_unread_emails()
     except Exception as e:
-        result = {
-        "intent": "Unknown",
-        "sentiment": "Neutral",
-        "priority": "Medium",
-        "draft_reply": "Our support team will respond shortly."
-    }
+        logging.error(f"Gmail fetch error: {e}")
+        return redirect(url_for("dashboard"))
+
+    new_tickets = []
+
+    for email_data in emails:
+        if not email_data.get("body"):
+            continue
+
+        existing = EmailTicket.query.filter_by(
+            gmail_id=email_data["gmail_id"]
+        ).first()
+        if existing:
+            continue
+
+        new_ticket = EmailTicket(
+            gmail_id=email_data["gmail_id"],
+            customer_email=email_data.get("from") or email_data.get("sender", "Unknown"),
+            subject=email_data.get("subject", "(No Subject)"),
+            body=email_data["body"]
+        )
+        db.session.add(new_ticket)
+        new_tickets.append(new_ticket)
+
+    db.session.commit()
+
+    for ticket in new_tickets[:MAX_AI_THREADS_PER_SYNC]:
+        thread = threading.Thread(
+            target=process_ticket_ai,
+            args=(ticket.id,),
+            daemon=True
+        )
+        thread.start()
+
+    logging.info(f"Synced {len(new_tickets)} new tickets")
+    return redirect(url_for("dashboard"))
 
 
 if __name__ == "__main__":

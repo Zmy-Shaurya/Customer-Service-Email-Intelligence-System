@@ -11,5 +11,6 @@ class EmailTicket(db.Model):
     sentiment = db.Column(db.String(50))
     priority = db.Column(db.String(20))
     ai_draft_reply = db.Column(db.Text)
-    status = db.Column(db.String(20), default="Draft")
+    status = db.Column(db.String(20), default="Open")
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+    gmail_id = db.Column(db.String(200), unique=True, nullable=True)
