@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, EmailTicket
 import threading
-from ai_service import analyse_email
+from services.ai_service import analyse_email
 import logging
 from dotenv import load_dotenv
-from gmail_service import fetch_unread_emails
+from services.gmail_service import fetch_unread_emails
 
 MAX_AI_THREADS_PER_SYNC = 10
 
@@ -113,6 +113,7 @@ def process_ticket_ai(ticket_id):
             db.session.rollback()
             logging.error(f"AI Processing Error: {e}")
 
+# --------------------------------------------------------------------------------
 @app.route("/sync")
 @app.route("/sync-gmail")
 def sync_emails():
@@ -156,6 +157,6 @@ def sync_emails():
     logging.info(f"Synced {len(new_tickets)} new tickets")
     return redirect(url_for("dashboard"))
 
-
+# --------------------------------------------------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)

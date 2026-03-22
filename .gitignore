@@ -1,5 +1,5 @@
 # Python
-__pycache__/
+__pycache__
 *.pyc
 .venv/
 
@@ -15,3 +15,6 @@ logs.log
 # Gmail credentials (VERY IMPORTANT)
 credentials.json
 token.json
+
+
+todo.md

@@ -92,8 +92,8 @@ customer-email-ai/
 ### 1. Clone the repository
 
 ```
-git clone https://github.com/YOUR_USERNAME/customer-email-ai.git
-cd customer-email-ai
+git clone https://github.com/Zmy-Shaurya/Customer-Service-Email-Intelligence-System
+cd Customer-Service-Email-Intelligence-System
 ```
 
 ---
