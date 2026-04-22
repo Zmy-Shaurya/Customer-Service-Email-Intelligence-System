@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket #{{ ticket.id }}</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .details, .edit-area { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        textarea { width: 100%; height: 150px; }
+    </style>
+</head>
+<body>
+    <a href="/dashboard">← Back to Dashboard</a>
+    <h2>Ticket #{{ ticket.id }}: {{ ticket.subject }}</h2>
+    
+    <div class="details">
+        <p><strong>Customer:</strong> {{ ticket.customer_email }}</p>
+        <p><strong>Date:</strong> {{ ticket.created_at }}</p>
+        <p><strong>Status:</strong> {{ ticket.status }}</p>
+        <p><strong>Intent:</strong> {{ ticket.intent }}</p>
+        <p><strong>Sentiment:</strong> {{ ticket.sentiment }}</p>
+        <p><strong>Priority:</strong> 
+            {% if ticket.priority == "High" or ticket.priority == "high" %}
+                <span style="color:red; font-weight:bold;">High</span>
+            {% elif ticket.priority == "Medium" or ticket.priority == "medium" %}
+                <span style="color:orange;">Medium</span>
+            {% else %}
+                <span style="color:green;">Low</span>
+            {% endif %}
+        </p>
+        <hr>
+        <h4>Email Body:</h4>
+        <pre style="white-space: pre-wrap;">{{ ticket.body }}</pre>
+    </div>
+
+    <div class="edit-area">
+        <h3>AI Analysis & Draft Reply</h3>
+        <form method="POST" action="/ticket/{{ ticket.id }}">
+            <p><strong>Status:</strong>
+                <select name="status">
+                    <option value="Open" {% if ticket.status == "Open" %}selected{% endif %}>Open</option>
+                    <option value="Draft" {% if ticket.status == "Draft" %}selected{% endif %}>Draft</option>
+                    <option value="Reviewed" {% if ticket.status == "Reviewed" %}selected{% endif %}>Reviewed</option>
+                    <option value="Sent" {% if ticket.status == "Sent" %}selected{% endif %}>Sent</option>
+                </select>
+            </p>
+            <p><strong>Draft Reply:</strong></p>
+            <textarea name="draft_reply">{{ ticket.ai_draft_reply }}</textarea>
+            <br><br>
+            <button type="submit">Save Updates</button>
+        </form>
+    </div>
+</body>
+</html>

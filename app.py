@@ -75,6 +75,19 @@ def dashboard():
     return render_template("dashboard.html", tickets=tickets)
 
 # --------------------------------------------------------------------------------
+@app.route("/ticket/<int:ticket_id>", methods=["GET", "POST"])
+def ticket_detail(ticket_id):
+    ticket = EmailTicket.query.get_or_404(ticket_id)
+    
+    if request.method == "POST":
+        ticket.ai_draft_reply = request.form.get("draft_reply", ticket.ai_draft_reply)
+        ticket.status = request.form.get("status", ticket.status)
+        db.session.commit()
+        return redirect(url_for("ticket_detail", ticket_id=ticket.id))
+        
+    return render_template("ticket.html", ticket=ticket)
+
+# --------------------------------------------------------------------------------
 @app.route("/analytics")
 def analytics():
 
