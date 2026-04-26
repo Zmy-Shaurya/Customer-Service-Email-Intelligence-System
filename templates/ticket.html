@@ -47,6 +47,9 @@
             <textarea name="draft_reply">{{ ticket.ai_draft_reply }}</textarea>
             <br><br>
             <button type="submit">Save Updates</button>
+            <button type="submit" formaction="/ticket/{{ ticket.id }}/send" style="margin-left: 10px; background-color: #28a745; color: white; border: none; padding: 5px 15px; cursor: pointer; border-radius: 4px;" {% if ticket.status == 'Sent' %}disabled{% endif %}>
+                📨 Send Reply via Gmail
+            </button>
         </form>
     </div>
 </body>

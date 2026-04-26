@@ -4,7 +4,7 @@ import threading
 from services.ai_service import analyse_email
 import logging
 from dotenv import load_dotenv
-from services.gmail_service import fetch_unread_emails
+from services.gmail_service import fetch_unread_emails, send_reply
 
 MAX_AI_THREADS_PER_SYNC = 10
 
@@ -86,6 +86,26 @@ def ticket_detail(ticket_id):
         return redirect(url_for("ticket_detail", ticket_id=ticket.id))
         
     return render_template("ticket.html", ticket=ticket)
+
+# --------------------------------------------------------------------------------
+@app.route("/ticket/<int:ticket_id>/send", methods=["POST"])
+def send_ticket_reply(ticket_id):
+    ticket = EmailTicket.query.get_or_404(ticket_id)
+    
+    try:
+        reply_body = request.form.get("draft_reply", ticket.ai_draft_reply)
+        # Prevent double 'Re:' tracking
+        subject = f"Re: {ticket.subject}" if not ticket.subject.startswith("Re:") else ticket.subject
+        
+        send_reply(ticket.customer_email, subject, reply_body, ticket.gmail_id)
+        
+        ticket.status = "Sent"
+        ticket.ai_draft_reply = reply_body
+        db.session.commit()
+    except Exception as e:
+        logging.error(f"Send Reply Error: {e}")
+        
+    return redirect(url_for("ticket_detail", ticket_id=ticket.id))
 
 # --------------------------------------------------------------------------------
 @app.route("/analytics")

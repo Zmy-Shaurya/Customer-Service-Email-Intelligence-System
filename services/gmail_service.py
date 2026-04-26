@@ -5,9 +5,13 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from google.auth.exceptions import RefreshError
+from email.message import EmailMessage
 
-
-SCOPES = ["https://www.googleapis.com/auth/gmail.modify"]
+SCOPES = [
+    "https://www.googleapis.com/auth/gmail.modify",
+    "https://www.googleapis.com/auth/gmail.send"
+]
 
 
 def get_gmail_service():
@@ -20,7 +24,11 @@ def get_gmail_service():
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            try:
+                creds.refresh(Request())
+            except RefreshError:
+                flow = InstalledAppFlow.from_client_secrets_file(str(credentials_path), SCOPES)
+                creds = flow.run_local_server(port=0)
         else:
             flow = InstalledAppFlow.from_client_secrets_file(str(credentials_path), SCOPES)
             creds = flow.run_local_server(port=0)
@@ -90,3 +98,37 @@ def fetch_unread_emails():
     except Exception as e:
         print("Gmail fetch error:", e)
         return []  # always return a list, never None
+
+def send_reply(to_email, subject, body, gmail_id=None):
+    try:
+        service = get_gmail_service()
+        message = EmailMessage()
+        message.set_content(body)
+        message["To"] = to_email
+        message["Subject"] = subject
+
+        thread_id = None
+        if gmail_id:
+            try:
+                original_msg = service.users().messages().get(userId='me', id=gmail_id, format='metadata', metadataHeaders=['Message-ID']).execute()
+                thread_id = original_msg.get('threadId')
+                headers = original_msg.get('payload', {}).get('headers', [])
+                message_id = next((h['value'] for h in headers if h['name'].upper() == 'MESSAGE-ID'), None)
+                
+                if message_id:
+                    message["In-Reply-To"] = message_id
+                    message["References"] = message_id
+            except Exception as e:
+                print("Failed to fetch original metadata for threading:", e)
+
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+        create_message = {"raw": encoded_message}
+        
+        if thread_id:
+            create_message["threadId"] = thread_id
+
+        send_message = service.users().messages().send(userId="me", body=create_message).execute()
+        return send_message
+    except Exception as e:
+        print("Gmail send error:", e)
+        raise e
