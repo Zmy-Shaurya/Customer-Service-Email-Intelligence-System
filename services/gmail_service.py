@@ -82,6 +82,7 @@ def fetch_unread_emails():
 
             emails.append({
                 "gmail_id": msg["id"],
+                "thread_id": msg_data.get("threadId"),
                 "sender": sender,
                 "subject": subject,
                 "body": body

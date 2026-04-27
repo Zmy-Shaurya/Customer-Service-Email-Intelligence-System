@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from models import db, EmailTicket, User
+from models import db, EmailTicket, User, TicketMessage
 import threading
 from services.ai_service import analyse_email
 import logging
@@ -78,7 +78,7 @@ def new_ticket():
     if request.method == "POST":
         customer_email = request.form.get("customer_email", "").strip()
         subject = request.form.get("subject", "").strip()
-        body = request.form.get("body", "").strip()
+        body = request.form.get("email_body", "").strip()
 
         if not customer_email or not subject or not body:
             logging.error("Missing form data in new-ticket POST request")
@@ -86,10 +86,13 @@ def new_ticket():
 
         ticket = EmailTicket(
             customer_email=customer_email,
-            subject=subject,
-            body=body
+            subject=subject
         )
         db.session.add(ticket)
+        db.session.flush() # get ticket.id
+        
+        msg = TicketMessage(ticket_id=ticket.id, sender="customer", body=body)
+        db.session.add(msg)
         db.session.commit()
 
         thread = threading.Thread(
@@ -131,8 +134,8 @@ def dashboard():
         query = query.filter(
             or_(
                 EmailTicket.subject.contains(search),
-                EmailTicket.body.contains(search),
-                EmailTicket.customer_email.contains(search)
+                EmailTicket.customer_email.contains(search),
+                EmailTicket.messages.any(TicketMessage.body.contains(search))
             )
         )
 
@@ -171,11 +174,20 @@ def send_ticket_reply(ticket_id):
         # Prevent double 'Re:' tracking
         subject = f"Re: {ticket.subject}" if not ticket.subject.startswith("Re:") else ticket.subject
         
-        send_reply(ticket.customer_email, subject, reply_body, ticket.gmail_id)
+        # Send via Gmail
+        send_response = send_reply(ticket.customer_email, subject, reply_body, ticket.gmail_id)
+        
+        # If we got a threadId back and we didn't have one, save it
+        if send_response and send_response.get("threadId") and not ticket.gmail_thread_id:
+            ticket.gmail_thread_id = send_response.get("threadId")
+            
+        # Append message to thread
+        msg = TicketMessage(ticket_id=ticket.id, sender="agent", body=reply_body)
+        db.session.add(msg)
         
         send_action = request.form.get("send_action", "resolve")
         ticket.status = "Pending Customer" if send_action == "pending" else "Resolved"
-        ticket.ai_draft_reply = reply_body
+        ticket.ai_draft_reply = "" # clear draft since sent
         db.session.commit()
     except Exception as e:
         logging.error(f"Send Reply Error: {e}")
@@ -263,7 +275,12 @@ def process_ticket_ai(ticket_id):
             return
 
         try:
-            result = analyse_email(ticket.body)
+            # We analyse the latest message from the customer
+            latest_msg = TicketMessage.query.filter_by(ticket_id=ticket.id, sender="customer").order_by(TicketMessage.created_at.desc()).first()
+            if not latest_msg:
+                return
+            
+            result = analyse_email(latest_msg.body)
 
             ticket.intent = result["intent"]
             ticket.sentiment = result["sentiment"]
@@ -288,28 +305,49 @@ def sync_emails():
         return redirect(url_for("dashboard"))
 
     new_tickets = []
+    updated_tickets = []
 
     for email_data in emails:
         if not email_data.get("body"):
             continue
 
-        existing = EmailTicket.query.filter_by(
+        existing_gmail_msg = EmailTicket.query.filter_by(
             gmail_id=email_data["gmail_id"]
         ).first()
-        if existing:
+        if existing_gmail_msg:
             continue
 
-        new_ticket = EmailTicket(
-            gmail_id=email_data["gmail_id"],
-            customer_email=email_data.get("from") or email_data.get("sender", "Unknown"),
-            subject=email_data.get("subject", "(No Subject)"),
-            body=email_data["body"]
-        )
-        db.session.add(new_ticket)
-        new_tickets.append(new_ticket)
+        # Try to find existing thread
+        existing_thread = None
+        if email_data.get("thread_id"):
+            existing_thread = EmailTicket.query.filter_by(gmail_thread_id=email_data["thread_id"]).first()
+            
+        if existing_thread:
+            # Append to existing thread
+            msg = TicketMessage(ticket_id=existing_thread.id, sender="customer", body=email_data["body"])
+            db.session.add(msg)
+            # Re-open the ticket if it was resolved
+            existing_thread.status = "In Progress"
+            # We don't have the message ID yet, flush to get it if needed, but not strictly necessary here.
+            updated_tickets.append(existing_thread)
+        else:
+            # Create new ticket
+            new_ticket = EmailTicket(
+                gmail_id=email_data["gmail_id"],
+                gmail_thread_id=email_data.get("thread_id"),
+                customer_email=email_data.get("from") or email_data.get("sender", "Unknown"),
+                subject=email_data.get("subject", "(No Subject)")
+            )
+            db.session.add(new_ticket)
+            db.session.flush() # get ID
+            
+            msg = TicketMessage(ticket_id=new_ticket.id, sender="customer", body=email_data["body"])
+            db.session.add(msg)
+            new_tickets.append(new_ticket)
 
     db.session.commit()
 
+    # Process AI for totally new tickets
     for ticket in new_tickets[:MAX_AI_THREADS_PER_SYNC]:
         thread = threading.Thread(
             target=process_ticket_ai,
@@ -317,8 +355,17 @@ def sync_emails():
             daemon=True
         )
         thread.start()
+        
+    # Also re-process AI for updated tickets to get a new draft based on newest message
+    for ticket in updated_tickets[:MAX_AI_THREADS_PER_SYNC]:
+        thread = threading.Thread(
+            target=process_ticket_ai,
+            args=(ticket.id,),
+            daemon=True
+        )
+        thread.start()
 
-    logging.info(f"Synced {len(new_tickets)} new tickets")
+    logging.info(f"Synced {len(new_tickets)} new tickets and updated {len(updated_tickets)} threads")
     return redirect(url_for("dashboard"))
 
 # --------------------------------------------------------------------------------

@@ -19,7 +19,6 @@ class EmailTicket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_email = db.Column(db.String(120))
     subject = db.Column(db.String(255))
-    body = db.Column(db.Text)
     intent = db.Column(db.String(100))
     sentiment = db.Column(db.String(50))
     priority = db.Column(db.String(20))
@@ -27,3 +26,14 @@ class EmailTicket(db.Model):
     status = db.Column(db.String(20), default="New")
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     gmail_id = db.Column(db.String(200), unique=True, nullable=True)
+    gmail_thread_id = db.Column(db.String(200), nullable=True)
+    
+    # Relationship to conversation thread
+    messages = db.relationship('TicketMessage', backref='ticket', lazy=True, cascade="all, delete-orphan", order_by="TicketMessage.created_at.asc()")
+
+class TicketMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('email_ticket.id'), nullable=False)
+    sender = db.Column(db.String(50), nullable=False)  # 'customer' or 'agent'
+    body = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
