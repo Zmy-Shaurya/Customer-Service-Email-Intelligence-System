@@ -138,10 +138,10 @@ def dashboard():
 
     tickets = query.order_by(EmailTicket.created_at.desc()).all()
 
-    # Stats for the dashboard header cards
+    # Stats for the dashboard header cards (case-insensitive to match AI output)
     total = EmailTicket.query.count()
-    high_priority = EmailTicket.query.filter_by(priority="High").count()
-    negative = EmailTicket.query.filter_by(sentiment="Negative").count()
+    high_priority = EmailTicket.query.filter(EmailTicket.priority.ilike("high")).count()
+    negative = EmailTicket.query.filter(EmailTicket.sentiment.ilike("negative")).count()
 
     return render_template("dashboard.html", tickets=tickets,
                            total=total, high_priority=high_priority, negative=negative)
@@ -197,16 +197,61 @@ def delete_ticket(ticket_id):
 def analytics():
 
     total = EmailTicket.query.count()
+    high_priority = EmailTicket.query.filter(EmailTicket.priority.ilike("high")).count()
+    negative = EmailTicket.query.filter(EmailTicket.sentiment.ilike("negative")).count()
 
-    high_priority = EmailTicket.query.filter_by(priority="High").count()
+    # Status breakdown
+    status_new = EmailTicket.query.filter(EmailTicket.status.ilike("new")).count()
+    status_in_progress = EmailTicket.query.filter(EmailTicket.status.ilike("in progress")).count()
+    status_pending = EmailTicket.query.filter(EmailTicket.status.ilike("pending customer")).count()
+    status_resolved = EmailTicket.query.filter(EmailTicket.status.ilike("resolved")).count()
 
-    negative = EmailTicket.query.filter_by(sentiment="Negative").count()
+    # Priority breakdown
+    priority_high = high_priority
+    priority_medium = EmailTicket.query.filter(EmailTicket.priority.ilike("medium")).count()
+    priority_low = EmailTicket.query.filter(EmailTicket.priority.ilike("low")).count()
+
+    # Sentiment breakdown
+    sentiment_positive = EmailTicket.query.filter(EmailTicket.sentiment.ilike("positive")).count()
+    sentiment_neutral = EmailTicket.query.filter(EmailTicket.sentiment.ilike("neutral")).count()
+    sentiment_negative = negative
+
+    # Intent breakdown — top intents
+    all_tickets = EmailTicket.query.all()
+    intent_counts = {}
+    for t in all_tickets:
+        intent_key = (t.intent or "Unknown").strip().title()
+        intent_counts[intent_key] = intent_counts.get(intent_key, 0) + 1
+    # Sort by count descending, take top 6
+    top_intents = sorted(intent_counts.items(), key=lambda x: x[1], reverse=True)[:6]
+    intent_labels = [i[0] for i in top_intents]
+    intent_values = [i[1] for i in top_intents]
+
+    # Resolution rate
+    resolution_rate = round((status_resolved / total * 100), 1) if total > 0 else 0
+
+    # Unique customers
+    unique_customers = db.session.query(EmailTicket.customer_email).distinct().count()
 
     return render_template(
         "analytics.html",
         total=total,
         high_priority=high_priority,
-        negative=negative
+        negative=negative,
+        status_new=status_new,
+        status_in_progress=status_in_progress,
+        status_pending=status_pending,
+        status_resolved=status_resolved,
+        priority_high=priority_high,
+        priority_medium=priority_medium,
+        priority_low=priority_low,
+        sentiment_positive=sentiment_positive,
+        sentiment_neutral=sentiment_neutral,
+        sentiment_negative=sentiment_negative,
+        intent_labels=intent_labels,
+        intent_values=intent_values,
+        resolution_rate=resolution_rate,
+        unique_customers=unique_customers
     )
 
 # --------------------------------------------------------------------------------
