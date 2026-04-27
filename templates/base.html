@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,23 +8,21 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS + DaisyUI -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
+                        // Premium neutral palette
                         brand: {
-                            50:  '#eef2ff',
+                            50: '#eef2ff',
                             100: '#e0e7ff',
-                            200: '#c7d2fe',
-                            300: '#a5b4fc',
-                            400: '#818cf8',
                             500: '#6366f1',
                             600: '#4f46e5',
                             700: '#4338ca',
@@ -35,119 +33,135 @@
         }
     </script>
 
+    <!-- Preline UI -->
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.1.0/dist/preline.min.js"></script>
+
     <!-- GSAP -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .sidebar-link { transition: all 0.2s ease; }
-        .sidebar-link:hover { transform: translateX(4px); }
+        body { 
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Subtle custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e4e4e7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+
+        /* Sidebar active state */
         .sidebar-link.active {
-            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            background-color: #f4f4f5; /* zinc-100 */
+            color: #18181b; /* zinc-900 */
+            font-weight: 600;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 60%;
+            width: 3px;
+            background-color: #4f46e5; /* indigo-600 */
+            border-radius: 0 4px 4px 0;
         }
-        .stat-gradient-1 { background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); }
-        .stat-gradient-2 { background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%); }
-        .stat-gradient-3 { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-zinc-50/50 text-zinc-800 min-h-screen flex selection:bg-indigo-100 selection:text-indigo-900">
 
-    <div class="flex min-h-screen">
-
-        <!-- ===================== SIDEBAR ===================== -->
-        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm">
-            <!-- Brand -->
-            <div class="px-6 py-5 border-b border-gray-100">
-                <a href="/dashboard" class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl stat-gradient-1 flex items-center justify-center shadow-md">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-                    </div>
-                    <span class="text-xl font-bold bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent">MailIQ</span>
-                </a>
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="w-64 bg-white border-r border-zinc-200 flex flex-col fixed h-full z-40">
+        <!-- Brand -->
+        <div class="px-6 py-6 border-b border-zinc-100 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
             </div>
+            <span class="text-lg font-bold text-zinc-900 tracking-tight">MailIQ</span>
+        </div>
 
-            <!-- Nav Links -->
-            <nav class="flex-1 px-4 py-6 space-y-1.5">
-                <a href="/dashboard" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
-                    {% if request.path == '/dashboard' %}active{% else %}text-gray-600 hover:bg-brand-50 hover:text-brand-600{% endif %}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zm0 9.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zm9.75-9.75A2.25 2.25 0 0115.75 3.75H18a2.25 2.25 0 012.25 2.25v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zm0 9.75a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 15.75V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-                    Dashboard
-                </a>
-                <a href="/new-ticket" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
-                    {% if request.path == '/new-ticket' %}active{% else %}text-gray-600 hover:bg-brand-50 hover:text-brand-600{% endif %}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                    New Ticket
-                </a>
-                <a href="/analytics" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
-                    {% if request.path == '/analytics' %}active{% else %}text-gray-600 hover:bg-brand-50 hover:text-brand-600{% endif %}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zm6-3.75c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v10.5c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 019 19.875v-10.5zm6-3c0-.621.504-1.125 1.125-1.125h2.25C19.496 5.25 20 5.754 20 6.375v13.5c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-13.5z"/></svg>
-                    Analytics
-                </a>
-                <a href="/sync-gmail" class="sidebar-link flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-brand-50 hover:text-brand-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg>
+        <!-- Nav Links -->
+        <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+            <p class="px-3 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Menu</p>
+            
+            <a href="/dashboard" class="sidebar-link relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors
+                {% if request.path == '/dashboard' %}active{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zm0 9.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zm9.75-9.75A2.25 2.25 0 0115.75 3.75H18a2.25 2.25 0 012.25 2.25v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zm0 9.75a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 15.75V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                Dashboard
+            </a>
+            <a href="/new-ticket" class="sidebar-link relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors
+                {% if request.path == '/new-ticket' %}active{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                New Ticket
+            </a>
+            <a href="/analytics" class="sidebar-link relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors
+                {% if request.path == '/analytics' %}active{% endif %}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zm6-3.75c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v10.5c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 019 19.875v-10.5zm6-3c0-.621.504-1.125 1.125-1.125h2.25C19.496 5.25 20 5.754 20 6.375v13.5c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-13.5z"/></svg>
+                Analytics
+            </a>
+            
+            <div class="pt-6">
+                <p class="px-3 text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">System</p>
+                <a href="/sync-gmail" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"/></svg>
                     Sync Gmail
                 </a>
-            </nav>
+            </div>
+        </nav>
 
-            <!-- User & Logout -->
-            <div class="px-4 py-4 border-t border-gray-100">
-                <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center">
-                        <span class="text-brand-600 font-semibold text-sm">{{ current_user.username[0]|upper }}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ current_user.username }}</p>
-                    </div>
-                    <a href="/logout" class="text-gray-400 hover:text-red-500 transition-colors" title="Logout">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
-                    </a>
+        <!-- User & Logout -->
+        <div class="p-4 border-t border-zinc-100">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-50 transition-colors">
+                <div class="w-8 h-8 rounded-full bg-zinc-200 border border-zinc-300 flex items-center justify-center shrink-0">
+                    <span class="text-zinc-600 font-semibold text-xs">{{ current_user.username[0]|upper }}</span>
                 </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-zinc-900 truncate">{{ current_user.username }}</p>
+                    <p class="text-xs text-zinc-500">Agent</p>
+                </div>
+                <a href="/logout" class="text-zinc-400 hover:text-red-600 transition-colors p-1" title="Logout">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+                </a>
             </div>
-        </aside>
+        </div>
+    </aside>
 
-        <!-- ===================== MAIN CONTENT ===================== -->
-        <main class="flex-1 ml-64">
-            <!-- Top bar -->
-            <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4">
-                <h1 class="text-lg font-semibold text-gray-800">{% block page_title %}Dashboard{% endblock %}</h1>
-            </header>
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="flex-1 ml-64 min-w-0">
+        <!-- Top bar -->
+        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-zinc-200 px-8 py-5">
+            <h1 class="text-xl font-semibold text-zinc-900 tracking-tight">{% block page_title %}Dashboard{% endblock %}</h1>
+        </header>
 
-            <!-- Page content -->
-            <div class="p-8">
-                {% block content %}{% endblock %}
-            </div>
-        </main>
-    </div>
+        <!-- Page content -->
+        <div class="p-8 max-w-7xl mx-auto">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
     <!-- Page animations -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Fade in the main content
-            gsap.from('main', { opacity: 0, y: 12, duration: 0.5, ease: 'power2.out' });
+            // Snappier, more professional animations
+            gsap.from('main', { opacity: 0, y: 8, duration: 0.3, ease: 'power2.out' });
 
-            // Animate any elements with data-animate attribute
             const animatedEls = document.querySelectorAll('[data-animate]');
             if (animatedEls.length) {
                 gsap.from(animatedEls, {
-                    opacity: 0, y: 20, duration: 0.5,
-                    stagger: 0.08, ease: 'power2.out', delay: 0.15
+                    opacity: 0, y: 12, duration: 0.4,
+                    stagger: 0.05, ease: 'power2.out', delay: 0.1
                 });
             }
 
-            // Stagger table rows
             const rows = document.querySelectorAll('[data-animate-row]');
             if (rows.length) {
                 gsap.from(rows, {
-                    opacity: 0, x: -15, duration: 0.4,
-                    stagger: 0.04, ease: 'power2.out', delay: 0.25
+                    opacity: 0, x: -8, duration: 0.3,
+                    stagger: 0.03, ease: 'power2.out', delay: 0.15
                 });
             }
         });

@@ -8,91 +8,94 @@
 
 {% block content %}
 <!-- ===== TOP STAT CARDS ===== -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-xl stat-gradient-1 flex items-center justify-center shadow-md shadow-indigo-200">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-md bg-indigo-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
             </div>
-            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</span>
+            <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Total</span>
         </div>
-        <p class="text-3xl font-bold text-gray-800">{{ total }}</p>
-        <p class="text-xs text-gray-400 mt-1">tickets in system</p>
+        <p class="text-2xl font-bold text-zinc-900 tracking-tight">{{ total }}</p>
     </div>
 
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md shadow-emerald-200">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-md bg-emerald-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Resolved</span>
+            <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Resolved</span>
         </div>
-        <p class="text-3xl font-bold text-gray-800">{{ resolution_rate }}%</p>
-        <p class="text-xs text-gray-400 mt-1">resolution rate</p>
+        <p class="text-2xl font-bold text-zinc-900 tracking-tight">{{ resolution_rate }}%</p>
     </div>
 
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-xl stat-gradient-2 flex items-center justify-center shadow-md shadow-rose-200">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-md bg-red-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
             </div>
-            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">High Priority</span>
+            <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">High Priority</span>
         </div>
-        <p class="text-3xl font-bold text-gray-800">{{ high_priority }}</p>
-        <p class="text-xs text-gray-400 mt-1">need attention</p>
+        <p class="text-2xl font-bold text-zinc-900 tracking-tight">{{ high_priority }}</p>
     </div>
 
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-xl stat-gradient-3 flex items-center justify-center shadow-md shadow-amber-200">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-md bg-amber-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
             </div>
-            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Customers</span>
+            <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wide">Customers</span>
         </div>
-        <p class="text-3xl font-bold text-gray-800">{{ unique_customers }}</p>
-        <p class="text-xs text-gray-400 mt-1">unique senders</p>
+        <p class="text-2xl font-bold text-zinc-900 tracking-tight">{{ unique_customers }}</p>
     </div>
 </div>
 
 <!-- ===== CHARTS ROW 1: Status + Priority ===== -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
     <!-- Status Distribution -->
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Ticket Status</h3>
-        <div class="flex items-center justify-center" style="height: 260px;">
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
+        <h3 class="text-sm font-semibold text-zinc-900 tracking-tight mb-4">Ticket Status</h3>
+        <div class="flex items-center justify-center" style="height: 240px;">
             <canvas id="statusChart"></canvas>
         </div>
-        <div class="grid grid-cols-2 gap-2 mt-4">
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> New ({{ status_new }})
+        <div class="grid grid-cols-2 gap-3 mt-6">
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-zinc-600">New</span></div>
+                <span class="font-medium text-zinc-900">{{ status_new }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> In Progress ({{ status_in_progress }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span class="text-zinc-600">In Progress</span></div>
+                <span class="font-medium text-zinc-900">{{ status_in_progress }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Pending ({{ status_pending }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-500"></span><span class="text-zinc-600">Pending</span></div>
+                <span class="font-medium text-zinc-900">{{ status_pending }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Resolved ({{ status_resolved }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-zinc-600">Resolved</span></div>
+                <span class="font-medium text-zinc-900">{{ status_resolved }}</span>
             </div>
         </div>
     </div>
 
     <!-- Priority Distribution -->
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Priority Breakdown</h3>
-        <div class="flex items-center justify-center" style="height: 260px;">
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
+        <h3 class="text-sm font-semibold text-zinc-900 tracking-tight mb-4">Priority Breakdown</h3>
+        <div class="flex items-center justify-center" style="height: 240px;">
             <canvas id="priorityChart"></canvas>
         </div>
-        <div class="flex items-center justify-center gap-6 mt-4">
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> High ({{ priority_high }})
+        <div class="flex flex-col gap-3 mt-6">
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-500"></span><span class="text-zinc-600">High</span></div>
+                <span class="font-medium text-zinc-900">{{ priority_high }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Medium ({{ priority_medium }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span class="text-zinc-600">Medium</span></div>
+                <span class="font-medium text-zinc-900">{{ priority_medium }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Low ({{ priority_low }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-zinc-600">Low</span></div>
+                <span class="font-medium text-zinc-900">{{ priority_low }}</span>
             </div>
         </div>
     </div>
@@ -101,53 +104,64 @@
 <!-- ===== CHARTS ROW 2: Sentiment + Top Intents ===== -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
     <!-- Sentiment Distribution -->
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Customer Sentiment</h3>
-        <div class="flex items-center justify-center" style="height: 260px;">
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
+        <h3 class="text-sm font-semibold text-zinc-900 tracking-tight mb-4">Customer Sentiment</h3>
+        <div class="flex items-center justify-center" style="height: 240px;">
             <canvas id="sentimentChart"></canvas>
         </div>
-        <div class="flex items-center justify-center gap-6 mt-4">
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Positive ({{ sentiment_positive }})
+        <div class="flex flex-col gap-3 mt-6">
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-zinc-600">Positive</span></div>
+                <span class="font-medium text-zinc-900">{{ sentiment_positive }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span> Neutral ({{ sentiment_neutral }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-zinc-400"></span><span class="text-zinc-600">Neutral</span></div>
+                <span class="font-medium text-zinc-900">{{ sentiment_neutral }}</span>
             </div>
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-                <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Negative ({{ sentiment_negative }})
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500"></span><span class="text-zinc-600">Negative</span></div>
+                <span class="font-medium text-zinc-900">{{ sentiment_negative }}</span>
             </div>
         </div>
     </div>
 
     <!-- Top Intents -->
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Top Customer Intents</h3>
-        <div class="flex items-center justify-center" style="height: 300px;">
+    <div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6 flex flex-col">
+        <h3 class="text-sm font-semibold text-zinc-900 tracking-tight mb-4">Top Customer Intents</h3>
+        <div class="flex-1 flex items-center justify-center min-h-[280px]">
             <canvas id="intentChart"></canvas>
         </div>
     </div>
 </div>
 
 <!-- ===== QUICK INSIGHTS ===== -->
-<div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-    <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Quick Insights</h3>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-indigo-600">{{ status_new + status_in_progress }}</p>
-            <p class="text-xs text-gray-500 mt-1 font-medium">Open Tickets</p>
+<div data-animate class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
+    <h3 class="text-sm font-semibold text-zinc-900 tracking-tight mb-4">Quick Insights</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-zinc-50 rounded-lg p-4 border border-zinc-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-zinc-500 font-medium mb-1">Open Tickets</p>
+                <p class="text-xl font-bold text-zinc-900">{{ status_new + status_in_progress }}</p>
+            </div>
         </div>
-        <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-emerald-600">{{ status_resolved }}</p>
-            <p class="text-xs text-gray-500 mt-1 font-medium">Closed Tickets</p>
+        <div class="bg-zinc-50 rounded-lg p-4 border border-zinc-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-zinc-500 font-medium mb-1">Closed Tickets</p>
+                <p class="text-xl font-bold text-zinc-900">{{ status_resolved }}</p>
+            </div>
         </div>
-        <div class="bg-gradient-to-br from-rose-50 to-rose-100/50 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-rose-600">{{ negative }}</p>
-            <p class="text-xs text-gray-500 mt-1 font-medium">Unhappy Customers</p>
+        <div class="bg-zinc-50 rounded-lg p-4 border border-zinc-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-zinc-500 font-medium mb-1">Unhappy Customers</p>
+                <p class="text-xl font-bold text-zinc-900">{{ negative }}</p>
+            </div>
         </div>
-        <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-4 text-center">
-            {% set avg = (total / unique_customers)|round(1) if unique_customers > 0 else 0 %}
-            <p class="text-2xl font-bold text-amber-600">{{ avg }}</p>
-            <p class="text-xs text-gray-500 mt-1 font-medium">Avg Tickets / Customer</p>
+        <div class="bg-zinc-50 rounded-lg p-4 border border-zinc-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs text-zinc-500 font-medium mb-1">Avg Tickets / Customer</p>
+                {% set avg = (total / unique_customers)|round(1) if unique_customers > 0 else 0 %}
+                <p class="text-xl font-bold text-zinc-900">{{ avg }}</p>
+            </div>
         </div>
     </div>
 </div>
@@ -155,21 +169,32 @@
 
 {% block extra_scripts %}
 <script>
-    // Color palette
+    // Professional color palette
     const colors = {
-        blue:    { bg: 'rgba(96, 165, 250, 0.8)',  border: 'rgb(96, 165, 250)' },
-        amber:   { bg: 'rgba(251, 191, 36, 0.8)',  border: 'rgb(251, 191, 36)' },
-        purple:  { bg: 'rgba(167, 139, 250, 0.8)', border: 'rgb(167, 139, 250)' },
-        emerald: { bg: 'rgba(52, 211, 153, 0.8)',  border: 'rgb(52, 211, 153)' },
-        red:     { bg: 'rgba(251, 113, 133, 0.8)', border: 'rgb(251, 113, 133)' },
-        gray:    { bg: 'rgba(156, 163, 175, 0.8)', border: 'rgb(156, 163, 175)' },
-        indigo:  { bg: 'rgba(129, 140, 248, 0.8)', border: 'rgb(129, 140, 248)' },
-        rose:    { bg: 'rgba(251, 113, 133, 0.8)', border: 'rgb(251, 113, 133)' },
+        blue:    { bg: 'rgba(59, 130, 246, 0.9)',  border: '#3b82f6' },
+        amber:   { bg: 'rgba(245, 158, 11, 0.9)',  border: '#f59e0b' },
+        purple:  { bg: 'rgba(168, 85, 247, 0.9)',  border: '#a855f7' },
+        emerald: { bg: 'rgba(16, 185, 129, 0.9)',  border: '#10b981' },
+        red:     { bg: 'rgba(239, 68, 68, 0.9)',   border: '#ef4444' },
+        gray:    { bg: 'rgba(161, 161, 170, 0.9)', border: '#a1a1aa' },
+        indigo:  { bg: 'rgba(79, 70, 229, 0.9)',   border: '#4f46e5' },
+        rose:    { bg: 'rgba(244, 63, 94, 0.9)',   border: '#f43f5e' },
+        sky:     { bg: 'rgba(14, 165, 233, 0.9)',  border: '#0ea5e9' },
     };
 
     const doughnutDefaults = {
-        cutout: '65%',
-        plugins: { legend: { display: false } },
+        cutout: '75%',
+        plugins: { 
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: 'rgba(24, 24, 27, 0.9)',
+                titleFont: { family: 'Inter', size: 13 },
+                bodyFont: { family: 'Inter', size: 13 },
+                padding: 10,
+                cornerRadius: 8,
+                displayColors: true
+            }
+        },
         responsive: true,
         maintainAspectRatio: false,
     };
@@ -182,9 +207,9 @@
             datasets: [{
                 data: [{{ status_new }}, {{ status_in_progress }}, {{ status_pending }}, {{ status_resolved }}],
                 backgroundColor: [colors.blue.bg, colors.amber.bg, colors.purple.bg, colors.emerald.bg],
-                borderColor: [colors.blue.border, colors.amber.border, colors.purple.border, colors.emerald.border],
+                borderColor: '#ffffff',
                 borderWidth: 2,
-                hoverOffset: 6,
+                hoverOffset: 4,
             }]
         },
         options: doughnutDefaults
@@ -198,9 +223,9 @@
             datasets: [{
                 data: [{{ priority_high }}, {{ priority_medium }}, {{ priority_low }}],
                 backgroundColor: [colors.red.bg, colors.amber.bg, colors.emerald.bg],
-                borderColor: [colors.red.border, colors.amber.border, colors.emerald.border],
+                borderColor: '#ffffff',
                 borderWidth: 2,
-                hoverOffset: 6,
+                hoverOffset: 4,
             }]
         },
         options: doughnutDefaults
@@ -214,16 +239,16 @@
             datasets: [{
                 data: [{{ sentiment_positive }}, {{ sentiment_neutral }}, {{ sentiment_negative }}],
                 backgroundColor: [colors.emerald.bg, colors.gray.bg, colors.rose.bg],
-                borderColor: [colors.emerald.border, colors.gray.border, colors.rose.border],
+                borderColor: '#ffffff',
                 borderWidth: 2,
-                hoverOffset: 6,
+                hoverOffset: 4,
             }]
         },
         options: doughnutDefaults
     });
 
     // --- Intent Horizontal Bar ---
-    const intentColors = [colors.indigo, colors.blue, colors.purple, colors.emerald, colors.amber, colors.red];
+    const intentColors = [colors.indigo, colors.sky, colors.blue, colors.emerald, colors.amber, colors.rose];
     new Chart(document.getElementById('intentChart'), {
         type: 'bar',
         data: {
@@ -231,26 +256,35 @@
             datasets: [{
                 data: {{ intent_values | tojson }},
                 backgroundColor: intentColors.map(c => c.bg),
-                borderColor: intentColors.map(c => c.border),
-                borderWidth: 2,
-                borderRadius: 8,
-                barPercentage: 0.6,
+                borderColor: 'transparent',
+                borderWidth: 0,
+                borderRadius: 4,
+                barPercentage: 0.5,
             }]
         },
         options: {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(24, 24, 27, 0.9)',
+                    titleFont: { family: 'Inter', size: 13 },
+                    bodyFont: { family: 'Inter', size: 13 },
+                    padding: 10,
+                    cornerRadius: 8
+                }
+            },
             scales: {
                 x: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1, font: { size: 11, family: 'Inter' } },
-                    grid: { color: 'rgba(0,0,0,0.04)' }
+                    ticks: { stepSize: 1, font: { size: 11, family: 'Inter' }, color: '#71717a' },
+                    grid: { color: '#f4f4f5', drawBorder: false }
                 },
                 y: {
-                    ticks: { font: { size: 12, family: 'Inter', weight: 500 } },
-                    grid: { display: false }
+                    ticks: { font: { size: 12, family: 'Inter', weight: 500 }, color: '#3f3f46' },
+                    grid: { display: false, drawBorder: false }
                 }
             }
         }
