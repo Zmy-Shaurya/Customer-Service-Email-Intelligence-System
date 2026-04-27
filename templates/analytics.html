@@ -2,70 +2,258 @@
 {% block title %}MailIQ — Analytics{% endblock %}
 {% block page_title %}Analytics{% endblock %}
 
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+{% endblock %}
+
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <!-- Total Tickets -->
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl stat-gradient-1 flex items-center justify-center shadow-md shadow-indigo-200">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+<!-- ===== TOP STAT CARDS ===== -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl stat-gradient-1 flex items-center justify-center shadow-md shadow-indigo-200">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
             </div>
+            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</span>
         </div>
-        <p class="text-4xl font-bold text-gray-800">{{ total }}</p>
-        <p class="text-sm text-gray-500 mt-1">Total Tickets</p>
-        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div class="h-full stat-gradient-1 rounded-full" style="width: 100%"></div>
+        <p class="text-3xl font-bold text-gray-800">{{ total }}</p>
+        <p class="text-xs text-gray-400 mt-1">tickets in system</p>
+    </div>
+
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md shadow-emerald-200">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Resolved</span>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">{{ resolution_rate }}%</p>
+        <p class="text-xs text-gray-400 mt-1">resolution rate</p>
+    </div>
+
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl stat-gradient-2 flex items-center justify-center shadow-md shadow-rose-200">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">High Priority</span>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">{{ high_priority }}</p>
+        <p class="text-xs text-gray-400 mt-1">need attention</p>
+    </div>
+
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl stat-gradient-3 flex items-center justify-center shadow-md shadow-amber-200">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Customers</span>
+        </div>
+        <p class="text-3xl font-bold text-gray-800">{{ unique_customers }}</p>
+        <p class="text-xs text-gray-400 mt-1">unique senders</p>
+    </div>
+</div>
+
+<!-- ===== CHARTS ROW 1: Status + Priority ===== -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- Status Distribution -->
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Ticket Status</h3>
+        <div class="flex items-center justify-center" style="height: 260px;">
+            <canvas id="statusChart"></canvas>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-4">
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> New ({{ status_new }})
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> In Progress ({{ status_in_progress }})
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span> Pending ({{ status_pending }})
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Resolved ({{ status_resolved }})
+            </div>
         </div>
     </div>
 
-    <!-- High Priority -->
+    <!-- Priority Distribution -->
     <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl stat-gradient-2 flex items-center justify-center shadow-md shadow-rose-200">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Priority Breakdown</h3>
+        <div class="flex items-center justify-center" style="height: 260px;">
+            <canvas id="priorityChart"></canvas>
+        </div>
+        <div class="flex items-center justify-center gap-6 mt-4">
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> High ({{ priority_high }})
             </div>
-        </div>
-        <p class="text-4xl font-bold text-gray-800">{{ high_priority }}</p>
-        <p class="text-sm text-gray-500 mt-1">High Priority</p>
-        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-            {% set pct = (high_priority / total * 100) if total > 0 else 0 %}
-            <div class="h-full stat-gradient-2 rounded-full" style="width: {{ pct }}%"></div>
-        </div>
-    </div>
-
-    <!-- Negative Sentiment -->
-    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl stat-gradient-3 flex items-center justify-center shadow-md shadow-amber-200">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Medium ({{ priority_medium }})
             </div>
-        </div>
-        <p class="text-4xl font-bold text-gray-800">{{ negative }}</p>
-        <p class="text-sm text-gray-500 mt-1">Negative Sentiment</p>
-        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-            {% set pct2 = (negative / total * 100) if total > 0 else 0 %}
-            <div class="h-full stat-gradient-3 rounded-full" style="width: {{ pct2 }}%"></div>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Low ({{ priority_low }})
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Summary section -->
+<!-- ===== CHARTS ROW 2: Sentiment + Top Intents ===== -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- Sentiment Distribution -->
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Customer Sentiment</h3>
+        <div class="flex items-center justify-center" style="height: 260px;">
+            <canvas id="sentimentChart"></canvas>
+        </div>
+        <div class="flex items-center justify-center gap-6 mt-4">
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Positive ({{ sentiment_positive }})
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span> Neutral ({{ sentiment_neutral }})
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-600">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Negative ({{ sentiment_negative }})
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Intents -->
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Top Customer Intents</h3>
+        <div class="flex items-center justify-center" style="height: 300px;">
+            <canvas id="intentChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ===== QUICK INSIGHTS ===== -->
 <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-    <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Summary</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-gray-50 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-indigo-600">{{ total - high_priority }}</p>
-            <p class="text-xs text-gray-500 mt-1">Normal Priority</p>
+    <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Quick Insights</h3>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-indigo-600">{{ status_new + status_in_progress }}</p>
+            <p class="text-xs text-gray-500 mt-1 font-medium">Open Tickets</p>
         </div>
-        <div class="bg-gray-50 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-emerald-600">{{ total - negative }}</p>
-            <p class="text-xs text-gray-500 mt-1">Non-Negative</p>
+        <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-emerald-600">{{ status_resolved }}</p>
+            <p class="text-xs text-gray-500 mt-1 font-medium">Closed Tickets</p>
         </div>
-        <div class="bg-gray-50 rounded-xl p-4 text-center">
-            {% set rate = ((total - high_priority) / total * 100)|round(1) if total > 0 else 0 %}
-            <p class="text-2xl font-bold text-amber-600">{{ rate }}%</p>
-            <p class="text-xs text-gray-500 mt-1">Normal Rate</p>
+        <div class="bg-gradient-to-br from-rose-50 to-rose-100/50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-rose-600">{{ negative }}</p>
+            <p class="text-xs text-gray-500 mt-1 font-medium">Unhappy Customers</p>
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-4 text-center">
+            {% set avg = (total / unique_customers)|round(1) if unique_customers > 0 else 0 %}
+            <p class="text-2xl font-bold text-amber-600">{{ avg }}</p>
+            <p class="text-xs text-gray-500 mt-1 font-medium">Avg Tickets / Customer</p>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Color palette
+    const colors = {
+        blue:    { bg: 'rgba(96, 165, 250, 0.8)',  border: 'rgb(96, 165, 250)' },
+        amber:   { bg: 'rgba(251, 191, 36, 0.8)',  border: 'rgb(251, 191, 36)' },
+        purple:  { bg: 'rgba(167, 139, 250, 0.8)', border: 'rgb(167, 139, 250)' },
+        emerald: { bg: 'rgba(52, 211, 153, 0.8)',  border: 'rgb(52, 211, 153)' },
+        red:     { bg: 'rgba(251, 113, 133, 0.8)', border: 'rgb(251, 113, 133)' },
+        gray:    { bg: 'rgba(156, 163, 175, 0.8)', border: 'rgb(156, 163, 175)' },
+        indigo:  { bg: 'rgba(129, 140, 248, 0.8)', border: 'rgb(129, 140, 248)' },
+        rose:    { bg: 'rgba(251, 113, 133, 0.8)', border: 'rgb(251, 113, 133)' },
+    };
+
+    const doughnutDefaults = {
+        cutout: '65%',
+        plugins: { legend: { display: false } },
+        responsive: true,
+        maintainAspectRatio: false,
+    };
+
+    // --- Status Donut ---
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['New', 'In Progress', 'Pending', 'Resolved'],
+            datasets: [{
+                data: [{{ status_new }}, {{ status_in_progress }}, {{ status_pending }}, {{ status_resolved }}],
+                backgroundColor: [colors.blue.bg, colors.amber.bg, colors.purple.bg, colors.emerald.bg],
+                borderColor: [colors.blue.border, colors.amber.border, colors.purple.border, colors.emerald.border],
+                borderWidth: 2,
+                hoverOffset: 6,
+            }]
+        },
+        options: doughnutDefaults
+    });
+
+    // --- Priority Donut ---
+    new Chart(document.getElementById('priorityChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['High', 'Medium', 'Low'],
+            datasets: [{
+                data: [{{ priority_high }}, {{ priority_medium }}, {{ priority_low }}],
+                backgroundColor: [colors.red.bg, colors.amber.bg, colors.emerald.bg],
+                borderColor: [colors.red.border, colors.amber.border, colors.emerald.border],
+                borderWidth: 2,
+                hoverOffset: 6,
+            }]
+        },
+        options: doughnutDefaults
+    });
+
+    // --- Sentiment Donut ---
+    new Chart(document.getElementById('sentimentChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+                data: [{{ sentiment_positive }}, {{ sentiment_neutral }}, {{ sentiment_negative }}],
+                backgroundColor: [colors.emerald.bg, colors.gray.bg, colors.rose.bg],
+                borderColor: [colors.emerald.border, colors.gray.border, colors.rose.border],
+                borderWidth: 2,
+                hoverOffset: 6,
+            }]
+        },
+        options: doughnutDefaults
+    });
+
+    // --- Intent Horizontal Bar ---
+    const intentColors = [colors.indigo, colors.blue, colors.purple, colors.emerald, colors.amber, colors.red];
+    new Chart(document.getElementById('intentChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ intent_labels | tojson }},
+            datasets: [{
+                data: {{ intent_values | tojson }},
+                backgroundColor: intentColors.map(c => c.bg),
+                borderColor: intentColors.map(c => c.border),
+                borderWidth: 2,
+                borderRadius: 8,
+                barPercentage: 0.6,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, font: { size: 11, family: 'Inter' } },
+                    grid: { color: 'rgba(0,0,0,0.04)' }
+                },
+                y: {
+                    ticks: { font: { size: 12, family: 'Inter', weight: 500 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
