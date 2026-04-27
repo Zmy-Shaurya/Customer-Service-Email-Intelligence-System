@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
-from models import db, EmailTicket
+from flask import Flask, render_template, request, redirect, url_for, flash
+from models import db, EmailTicket, User
 import threading
 from services.ai_service import analyse_email
 import logging
 from dotenv import load_dotenv
 from services.gmail_service import fetch_unread_emails, send_reply
+from sqlalchemy import or_
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 MAX_AI_THREADS_PER_SYNC = 10
 
@@ -19,14 +21,53 @@ logging.basicConfig(
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "super-secret-key-change-in-production"
 
 db.init_app(app)
 
+# Flask-Login setup
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 with app.app_context():
     db.create_all()
+    # Seed a default employee account if none exists
+    if not User.query.first():
+        default_user = User(username="admin")
+        default_user.set_password("admin123")
+        db.session.add(default_user)
+        db.session.commit()
+
+# --------------------------------------------------------------------------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard"))
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for("dashboard"))
+        flash("Invalid username or password.")
+    return render_template("login.html")
+
+# --------------------------------------------------------------------------------
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 # --------------------------------------------------------------------------------
 @app.route('/', methods=["GET","POST"])
+@login_required
 def home():
     if request.method == "POST":
         customer_email = request.form.get("customer_email", "").strip()
@@ -59,6 +100,7 @@ def home():
 
 # --------------------------------------------------------------------------------
 @app.route('/dashboard')
+@login_required
 def dashboard():
     query = EmailTicket.query
 
@@ -66,9 +108,27 @@ def dashboard():
     if priority:
         query = query.filter(EmailTicket.priority.ilike(priority))
 
+    status = request.args.get("status")
+    if status:
+        query = query.filter(EmailTicket.status.ilike(status))
+        
+    sentiment = request.args.get("sentiment")
+    if sentiment:
+        query = query.filter(EmailTicket.sentiment.ilike(sentiment))
+        
+    intent = request.args.get("intent")
+    if intent:
+        query = query.filter(EmailTicket.intent.ilike(f"%{intent}%"))
+
     search = request.args.get("search")
     if search:
-        query = query.filter(EmailTicket.subject.contains(search))
+        query = query.filter(
+            or_(
+                EmailTicket.subject.contains(search),
+                EmailTicket.body.contains(search),
+                EmailTicket.customer_email.contains(search)
+            )
+        )
 
     tickets = query.order_by(EmailTicket.created_at.desc()).all()
 
@@ -76,6 +136,7 @@ def dashboard():
 
 # --------------------------------------------------------------------------------
 @app.route("/ticket/<int:ticket_id>", methods=["GET", "POST"])
+@login_required
 def ticket_detail(ticket_id):
     ticket = EmailTicket.query.get_or_404(ticket_id)
     
@@ -89,6 +150,7 @@ def ticket_detail(ticket_id):
 
 # --------------------------------------------------------------------------------
 @app.route("/ticket/<int:ticket_id>/send", methods=["POST"])
+@login_required
 def send_ticket_reply(ticket_id):
     ticket = EmailTicket.query.get_or_404(ticket_id)
     
@@ -99,7 +161,8 @@ def send_ticket_reply(ticket_id):
         
         send_reply(ticket.customer_email, subject, reply_body, ticket.gmail_id)
         
-        ticket.status = "Sent"
+        send_action = request.form.get("send_action", "resolve")
+        ticket.status = "Pending Customer" if send_action == "pending" else "Resolved"
         ticket.ai_draft_reply = reply_body
         db.session.commit()
     except Exception as e:
@@ -108,7 +171,17 @@ def send_ticket_reply(ticket_id):
     return redirect(url_for("ticket_detail", ticket_id=ticket.id))
 
 # --------------------------------------------------------------------------------
+@app.route("/ticket/<int:ticket_id>/delete", methods=["POST"])
+@login_required
+def delete_ticket(ticket_id):
+    ticket = EmailTicket.query.get_or_404(ticket_id)
+    db.session.delete(ticket)
+    db.session.commit()
+    return redirect(url_for("dashboard"))
+
+# --------------------------------------------------------------------------------
 @app.route("/analytics")
+@login_required
 def analytics():
 
     total = EmailTicket.query.count()
@@ -149,6 +222,7 @@ def process_ticket_ai(ticket_id):
 # --------------------------------------------------------------------------------
 @app.route("/sync")
 @app.route("/sync-gmail")
+@login_required
 def sync_emails():
     try:
         emails = fetch_unread_emails()

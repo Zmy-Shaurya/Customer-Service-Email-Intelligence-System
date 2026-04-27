@@ -4,17 +4,38 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <h2>Support Dashboard</h2>
-    <div>
-        <a href="/dashboard">All</a>
-        <a href="/dashboard?priority=High">High</a>
-        <a href="/dashboard?priority=Medium">Medium</a>
-        <a href="/dashboard?priority=Low">Low</a>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Support Dashboard</h2>
+        <a href="/logout">Logout</a>
     </div>
-    <br>
-    <form method="GET" action="/dashboard">
-        <input type="text" name="search" placeholder="Search tickets...">
-        <button type="submit">Search</button>
+    <form method="GET" action="/dashboard" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+        <select name="status">
+            <option value="">All Statuses</option>
+            <option value="New" {% if request.args.get('status') == 'New' %}selected{% endif %}>New</option>
+            <option value="In Progress" {% if request.args.get('status') == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Pending Customer" {% if request.args.get('status') == 'Pending Customer' %}selected{% endif %}>Pending Customer</option>
+            <option value="Resolved" {% if request.args.get('status') == 'Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+
+        <select name="priority">
+            <option value="">All Priorities</option>
+            <option value="High" {% if request.args.get('priority') == 'High' %}selected{% endif %}>High</option>
+            <option value="Medium" {% if request.args.get('priority') == 'Medium' %}selected{% endif %}>Medium</option>
+            <option value="Low" {% if request.args.get('priority') == 'Low' %}selected{% endif %}>Low</option>
+        </select>
+
+        <select name="sentiment">
+            <option value="">All Sentiments</option>
+            <option value="Positive" {% if request.args.get('sentiment') == 'Positive' %}selected{% endif %}>Positive</option>
+            <option value="Neutral" {% if request.args.get('sentiment') == 'Neutral' %}selected{% endif %}>Neutral</option>
+            <option value="Negative" {% if request.args.get('sentiment') == 'Negative' %}selected{% endif %}>Negative</option>
+        </select>
+        
+        <input type="text" name="intent" placeholder="Filter by Intent..." value="{{ request.args.get('intent', '') }}">
+
+        <input type="text" name="search" placeholder="Search email, subject, body..." value="{{ request.args.get('search', '') }}" style="width: 250px;">
+        <button type="submit">Filter</button>
+        <a href="/dashboard"><button type="button">Clear</button></a>
     </form>
     <a href="/sync-gmail">
         <button>📥 Sync Gmail</button>
@@ -35,6 +56,9 @@
         <tr>
             <td>
                 <a href="/ticket/{{ ticket.id }}">Open</a>
+                <form action="/ticket/{{ ticket.id }}/delete" method="POST" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Are you sure you want to delete this ticket?');">Delete</button>
+                </form>
             </td>
             <td>{{ ticket.id }}</td>
             <td>{{ ticket.customer_email }}</td>

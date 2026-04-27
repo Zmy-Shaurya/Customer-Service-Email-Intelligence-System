@@ -37,18 +37,21 @@
         <form method="POST" action="/ticket/{{ ticket.id }}">
             <p><strong>Status:</strong>
                 <select name="status">
-                    <option value="Open" {% if ticket.status == "Open" %}selected{% endif %}>Open</option>
-                    <option value="Draft" {% if ticket.status == "Draft" %}selected{% endif %}>Draft</option>
-                    <option value="Reviewed" {% if ticket.status == "Reviewed" %}selected{% endif %}>Reviewed</option>
-                    <option value="Sent" {% if ticket.status == "Sent" %}selected{% endif %}>Sent</option>
+                    <option value="New" {% if ticket.status == "New" %}selected{% endif %}>New</option>
+                    <option value="In Progress" {% if ticket.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                    <option value="Pending Customer" {% if ticket.status == "Pending Customer" %}selected{% endif %}>Pending Customer</option>
+                    <option value="Resolved" {% if ticket.status == "Resolved" %}selected{% endif %}>Resolved</option>
                 </select>
             </p>
             <p><strong>Draft Reply:</strong></p>
             <textarea name="draft_reply">{{ ticket.ai_draft_reply }}</textarea>
             <br><br>
             <button type="submit">Save Updates</button>
-            <button type="submit" formaction="/ticket/{{ ticket.id }}/send" style="margin-left: 10px; background-color: #28a745; color: white; border: none; padding: 5px 15px; cursor: pointer; border-radius: 4px;" {% if ticket.status == 'Sent' %}disabled{% endif %}>
-                📨 Send Reply via Gmail
+            <button type="submit" name="send_action" value="pending" formaction="/ticket/{{ ticket.id }}/send" style="margin-left: 10px; background-color: #ffc107; color: #212529; border: none; padding: 5px 15px; cursor: pointer; border-radius: 4px;" {% if ticket.status == 'Resolved' %}disabled{% endif %}>
+                📨 Send & Keep Pending
+            </button>
+            <button type="submit" name="send_action" value="resolve" formaction="/ticket/{{ ticket.id }}/send" style="margin-left: 10px; background-color: #28a745; color: white; border: none; padding: 5px 15px; cursor: pointer; border-radius: 4px;" {% if ticket.status == 'Resolved' %}disabled{% endif %}>
+                📨 Send & Resolve Ticket
             </button>
         </form>
     </div>
