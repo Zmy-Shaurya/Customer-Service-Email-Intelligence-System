@@ -66,34 +66,40 @@ def logout():
     return redirect(url_for("login"))
 
 # --------------------------------------------------------------------------------
-@app.route('/', methods=["GET","POST"])
+@app.route('/')
 @login_required
 def home():
+    return redirect(url_for("dashboard"))
+
+# --------------------------------------------------------------------------------
+@app.route('/new-ticket', methods=["GET","POST"])
+@login_required
+def new_ticket():
     if request.method == "POST":
         customer_email = request.form.get("customer_email", "").strip()
         subject = request.form.get("subject", "").strip()
         body = request.form.get("body", "").strip()
 
         if not customer_email or not subject or not body:
-            logging.error("Missing form data in home POST request")
-            return redirect(url_for("home"))
+            logging.error("Missing form data in new-ticket POST request")
+            return redirect(url_for("new_ticket"))
 
-        new_ticket = EmailTicket(
+        ticket = EmailTicket(
             customer_email=customer_email,
             subject=subject,
             body=body
         )
-        db.session.add(new_ticket)
+        db.session.add(ticket)
         db.session.commit()
 
         thread = threading.Thread(
             target=process_ticket_ai,
-            args=(new_ticket.id,),
+            args=(ticket.id,),
             daemon=True
         )
         thread.start()
 
-        logging.info(f"New ticket created with ID: {new_ticket.id}")
+        logging.info(f"New ticket created with ID: {ticket.id}")
         return redirect(url_for("dashboard"))
 
     return render_template("index.html")
@@ -132,7 +138,13 @@ def dashboard():
 
     tickets = query.order_by(EmailTicket.created_at.desc()).all()
 
-    return render_template("dashboard.html", tickets=tickets)
+    # Stats for the dashboard header cards
+    total = EmailTicket.query.count()
+    high_priority = EmailTicket.query.filter_by(priority="High").count()
+    negative = EmailTicket.query.filter_by(sentiment="Negative").count()
+
+    return render_template("dashboard.html", tickets=tickets,
+                           total=total, high_priority=high_priority, negative=negative)
 
 # --------------------------------------------------------------------------------
 @app.route("/ticket/<int:ticket_id>", methods=["GET", "POST"])

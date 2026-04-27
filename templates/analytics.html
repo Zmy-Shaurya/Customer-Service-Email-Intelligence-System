@@ -1,5 +1,71 @@
-<h2>Support Analytics</h2>
+{% extends "base.html" %}
+{% block title %}MailIQ — Analytics{% endblock %}
+{% block page_title %}Analytics{% endblock %}
 
-<p>Total Tickets: {{ total }}</p>
-<p>High Priority Tickets: {{ high_priority }}</p>
-<p>Negative Sentiment Tickets: {{ negative }}</p>
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Total Tickets -->
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl stat-gradient-1 flex items-center justify-center shadow-md shadow-indigo-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            </div>
+        </div>
+        <p class="text-4xl font-bold text-gray-800">{{ total }}</p>
+        <p class="text-sm text-gray-500 mt-1">Total Tickets</p>
+        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full stat-gradient-1 rounded-full" style="width: 100%"></div>
+        </div>
+    </div>
+
+    <!-- High Priority -->
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl stat-gradient-2 flex items-center justify-center shadow-md shadow-rose-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+            </div>
+        </div>
+        <p class="text-4xl font-bold text-gray-800">{{ high_priority }}</p>
+        <p class="text-sm text-gray-500 mt-1">High Priority</p>
+        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+            {% set pct = (high_priority / total * 100) if total > 0 else 0 %}
+            <div class="h-full stat-gradient-2 rounded-full" style="width: {{ pct }}%"></div>
+        </div>
+    </div>
+
+    <!-- Negative Sentiment -->
+    <div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl stat-gradient-3 flex items-center justify-center shadow-md shadow-amber-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>
+            </div>
+        </div>
+        <p class="text-4xl font-bold text-gray-800">{{ negative }}</p>
+        <p class="text-sm text-gray-500 mt-1">Negative Sentiment</p>
+        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+            {% set pct2 = (negative / total * 100) if total > 0 else 0 %}
+            <div class="h-full stat-gradient-3 rounded-full" style="width: {{ pct2 }}%"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary section -->
+<div data-animate class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+    <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider mb-4">Summary</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-indigo-600">{{ total - high_priority }}</p>
+            <p class="text-xs text-gray-500 mt-1">Normal Priority</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-emerald-600">{{ total - negative }}</p>
+            <p class="text-xs text-gray-500 mt-1">Non-Negative</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 text-center">
+            {% set rate = ((total - high_priority) / total * 100)|round(1) if total > 0 else 0 %}
+            <p class="text-2xl font-bold text-amber-600">{{ rate }}%</p>
+            <p class="text-xs text-gray-500 mt-1">Normal Rate</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
