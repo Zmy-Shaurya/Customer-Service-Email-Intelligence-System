@@ -139,9 +139,12 @@ def dashboard():
             )
         )
 
-    tickets = query.order_by(EmailTicket.created_at.desc()).all()
-
-    # Stats for the dashboard header cards (case-insensitive to match AI output)
+    tickets = query.all()
+    # Sort tickets by the most recent message's created_at, falling back to ticket created_at
+    tickets.sort(
+        key=lambda t: max([m.created_at for m in t.messages]) if t.messages else t.created_at,
+        reverse=True
+    )
     total = EmailTicket.query.count()
     high_priority = EmailTicket.query.filter(EmailTicket.priority.ilike("high")).count()
     negative = EmailTicket.query.filter(EmailTicket.sentiment.ilike("negative")).count()

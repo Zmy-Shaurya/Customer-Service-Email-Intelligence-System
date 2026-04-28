@@ -67,18 +67,37 @@ def fetch_unread_emails():
             subject = next((h["value"] for h in headers if h["name"] == "Subject"), "No Subject")
             sender = next((h["value"] for h in headers if h["name"] == "From"), "Unknown")
 
-            body = ""
-            payload = msg_data["payload"]
+            def extract_body(payload_part):
+                if "parts" in payload_part:
+                    for part in payload_part["parts"]:
+                        if part["mimeType"] == "text/plain":
+                            data = part["body"].get("data", "")
+                            return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
+                        elif "parts" in part:
+                            nested_body = extract_body(part)
+                            if nested_body:
+                                return nested_body
+                elif "body" in payload_part and payload_part["body"].get("data"):
+                    data = payload_part["body"].get("data", "")
+                    return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
+                return ""
 
-            if "parts" in payload:
-                for part in payload["parts"]:
-                    if part["mimeType"] == "text/plain":
-                        data = part["body"].get("data", "")
-                        body = base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
-                        break
-            elif "body" in payload:
-                data = payload["body"].get("data", "")
-                body = base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
+            body = extract_body(payload)
+            
+            # Strip out quoted replies (e.g., "On Mon, 27 Apr... wrote:")
+            def strip_quoted_text(text):
+                import re
+                pattern1 = r"(?i)(?:\r?\n)?On\s.*?wrote:\s*(?:\r?\n)?"
+                pattern2 = r"(?i)(?:\r?\n)?-----Original Message-----"
+                pattern3 = r"(?i)(?:\r?\n)?From:\s"
+                
+                for pattern in [pattern1, pattern2, pattern3]:
+                    parts = re.split(pattern, text, maxsplit=1)
+                    if len(parts) > 1:
+                        text = parts[0]
+                return text.strip()
+                
+            body = strip_quoted_text(body)
 
             emails.append({
                 "gmail_id": msg["id"],
