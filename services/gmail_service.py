@@ -89,6 +89,7 @@ def fetch_unread_emails():
                     return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
                 return ""
 
+            payload = msg_data["payload"]
             body = extract_body(payload)
             
             # Strip out quoted replies (e.g., "On Mon, 27 Apr... wrote:")

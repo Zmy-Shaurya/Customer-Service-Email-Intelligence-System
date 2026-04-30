@@ -89,22 +89,12 @@ Add the following variables:
 2.  Render will now download your code, run the Build Command to install packages (including the new `psycopg2-binary` required for Postgres), and then run the Start Command.
 3.  Watch the deployment logs. You should see "Build Successful" followed by Gunicorn starting your workers.
 
-### Important Final Step: Migrating the Database
-Since your Postgres database is brand new and completely empty, it doesn't have the tables for `EmailTicket`, `TicketMessage`, or `User` yet. 
+### Important Final Step: Database Initialization
+Since your Postgres database is brand new and completely empty, it doesn't have any tables yet. 
 
-Render requires you to run commands using the **Shell** tab:
-1.  On your Web Service page, click the **Shell** tab at the top.
-2.  Once the terminal connects, run Python interactively to create the tables:
-    ```bash
-    python
-    ```
-    ```python
-    from app import app, db
-    with app.app_context():
-        db.create_all()
-    exit()
-    ```
-3.  *(Optional)* If you want to migrate your old SQLite data into this new database, you will need to manually write a migration script or just start fresh with the new database. Starting fresh is usually easier for projects.
+Good news: The code in `app.py` already contains `db.create_all()`. This means that as soon as Render successfully builds and starts your app, it will **automatically** connect to your PostgreSQL database and create the tables for you! No manual terminal commands needed.
+
+*(Optional)* If you want to migrate your old SQLite data into this new database, you would need to write a custom script, but for projects, starting with a fresh database is usually perfectly fine.
 
 ---
 
