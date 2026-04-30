@@ -1,215 +1,77 @@
-# 📧 Customer Service Email Intelligence System
+# MailIQ: Customer Service Email Intelligence System 🚀
 
-An AI-powered customer support system that automatically fetches emails from Gmail, analyzes them using LLMs, prioritizes tickets, and generates smart response drafts — all through a clean dashboard.
+**🔴 Live Demo:** [https://customer-service-email-intelligence.onrender.com/](https://customer-service-email-intelligence.onrender.com/)
 
----
-
-## 🚀 Features
-
-* 📥 **Gmail Integration (OAuth2)**
-
-  * Fetch unread emails directly from Gmail inbox
-  * Convert emails into support tickets automatically
-
-* 🧠 **AI-Powered Email Analysis**
-
-  * Intent classification (Refund, Complaint, Inquiry, etc.)
-  * Sentiment detection (Positive, Neutral, Negative)
-  * Priority assignment (Low / Medium / High)
-  * Auto-generated draft replies
-
-* 📊 **Dashboard & Ticket Management**
-
-  * View all tickets in a centralized dashboard
-  * Search and filter by priority and subject
-  * Human-in-the-loop editing of AI replies
-
-* 📈 **Analytics**
-
-  * Total tickets
-  * High priority issues
-  * Negative sentiment tracking
-
-* ⚡ **Asynchronous Processing**
-
-  * Background AI processing using threads
-  * Fast UI with non-blocking operations
+MailIQ is an intelligent, automated customer support helpdesk built with Python and Flask. It seamlessly integrates with the **Gmail API** to ingest customer emails and utilizes **Google Gemini 2.5 Flash** to automatically analyze sentiment, detect intent, and draft context-aware replies before a human agent even opens the ticket.
 
 ---
 
-## 🧠 System Architecture
+## ✨ Key Features
 
-```
-Gmail API  →  Email Fetching Layer
-                ↓
-Flask Backend  → Ticket Creation
-                ↓
-Background Thread → AI Processing (Gemini)
-                ↓
-Database (SQLite)
-                ↓
-Dashboard UI (Jinja Templates)
-```
+*   **✉️ Automated Gmail Ingestion:** Connects directly to a support Gmail account to pull in new unread emails and thread replies automatically.
+*   **🧠 AI-Powered Triaging:** Uses Google's Gemini LLM to analyze incoming messages and assign:
+    *   **Intent:** (Refund, Technical Support, Delivery Issue, General Inquiry)
+    *   **Sentiment:** (Positive, Neutral, Negative)
+    *   **Priority:** Auto-escalates negative or urgent tickets to High Priority.
+*   **📝 Auto-Drafted Replies:** Gemini automatically generates a professional, context-aware draft reply based on the customer's email history.
+*   **💬 Threaded Conversations:** Chat-like interface that groups back-and-forth emails between the customer and the support agent into a single unified ticket view.
+*   **📊 Analytics Dashboard:** Visual insights into ticket volumes, customer sentiment trends, and team resolution rates.
+*   **☁️ Production Ready:** Fully configured to run on serverless/ephemeral cloud platforms like Render with PostgreSQL.
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Technology Stack
 
-* **Backend:** Flask, Flask-SQLAlchemy
-* **Database:** SQLite
-* **AI:** Google Gemini API
-* **APIs:** Gmail API (OAuth2)
-* **Frontend:** HTML, CSS (Jinja Templates)
-
----
-
-## 📂 Project Structure
-
-```
-customer-email-ai/
-│
-├── app.py
-├── models.py
-├── services/
-│   ├── ai_service.py
-│   └── gmail_service.py
-│
-├── templates/
-├── static/
-├── instance/
-│   └── app.db
-│
-├── docs/
-├── requirements.txt
-├── README.md
-└── .env
-```
+*   **Backend:** Python 3, Flask, SQLAlchemy, Gunicorn
+*   **Frontend:** HTML5, Tailwind CSS, Preline UI Components
+*   **Database:** SQLite (Local Development) / PostgreSQL (Production)
+*   **APIs & AI:** Google Gmail API (`google-api-python-client`), Google Gemini AI (`google-genai`)
 
 ---
 
-## ⚙️ Installation & Setup
+## 🚀 Local Development Setup
 
-### 1. Clone the repository
+### 1. Prerequisites
+Ensure you have Python 3.10+ installed and a Google Cloud Console account set up with the Gmail API enabled. You will need to download your OAuth 2.0 Client ID as `credentials.json`.
 
-```
-git clone https://github.com/Zmy-Shaurya/Customer-Service-Email-Intelligence-System
+### 2. Installation
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/Customer-Service-Email-Intelligence-System.git
 cd Customer-Service-Email-Intelligence-System
-```
 
----
-
-### 2. Create virtual environment
-
-```
+# Create and activate a virtual environment
 python -m venv .venv
-source .venv/bin/activate   # Mac/Linux
-.venv\Scripts\activate      # Windows
-```
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 
----
-
-### 3. Install dependencies
-
-```
+# Install dependencies
 pip install -r requirements.txt
 ```
 
----
-
-### 4. Setup environment variables
-
-Create a `.env` file:
-
-```
-GEMINI_API_KEY=your_api_key_here
+### 3. Environment Variables
+Create a `.env` file in the root directory and add your Gemini API Key:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+SECRET_KEY=your_flask_secret_key
 ```
 
----
-
-### 5. Setup Gmail API
-
-* Enable Gmail API in Google Cloud Console
-* Download `credentials.json`
-* Place it in the root directory
-
-⚠️ **Important:** Do NOT commit `credentials.json` or `token.json`
-
----
-
-### 6. Run the app
-
-```
+### 4. Database Initialization & Run
+```bash
+# The application automatically initializes the SQLite database on first run.
 python app.py
 ```
-
-Open:
-
-```
-http://127.0.0.1:5000
-```
+Open `http://127.0.0.1:5000` in your browser.
 
 ---
 
-## 🔄 How It Works
+## 🌍 Cloud Deployment (Render / Vercel)
 
-1. User submits email OR clicks "Sync Gmail"
-2. Emails are fetched from Gmail
-3. Tickets are created in the database
-4. Background thread processes email using AI
-5. Dashboard updates with:
+This application is fully optimized for cloud deployments requiring ephemeral storage solutions. Instead of relying on local files for Google Authentication, the system dynamically generates `token.json` from Environment Variables upon boot.
 
-   * intent
-   * sentiment
-   * priority
-   * draft reply
+For a comprehensive step-by-step guide on deploying to Render using a free PostgreSQL database, please see our [Deployment Guide](DEPLOYMENT_GUIDE.md).
 
 ---
 
-## 🧪 Example Use Cases
+## 🎓 Academic / Team Reference
 
-* Customer support automation
-* Email triaging system
-* AI-assisted helpdesk tools
-* Internal support dashboards
-
----
-
-## ⚠️ Known Limitations
-
-* No user authentication (MVP)
-* No real-time email sync (manual trigger)
-* Basic UI (can be improved with React/Tailwind)
-
----
-
-## 🚀 Future Improvements
-
-* User authentication (Flask-Login)
-* Gmail auto-reply feature
-* Real-time updates using WebSockets
-* Advanced analytics dashboard (charts, trends)
-* Multi-user support system
-
----
-
-## 👨‍💻 Contributors
-
-* Shaurya Pratap Singh
-* Sukanya Budhiraja
-* Dishant Shridhar
-
----
-
-## 📜 License
-
-This project is for educational purposes.
-
----
-
-## ⭐ Acknowledgements
-
-* Google Gemini API
-* Gmail API
-* Flask Community
-
----
+If you are a team member preparing for a project defense or technical examination on this system, please review the [Team Exam Prep Guide](TEAM_EXAM_PREP_GUIDE.md) for a detailed breakdown of the system architecture and designated roles.

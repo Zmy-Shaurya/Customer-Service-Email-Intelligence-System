@@ -20,10 +20,10 @@ def analyse_email(email_body):
         - positive
         -neutral
         -negative
-        Priority rules:
-        -negative sentiment= high
-        - neutral= medium
-        -positive= low
+        Priority rules(based on how urgend the email is and importance): 
+        - high
+        - medium
+        - low
         Return format for json:
         {{
             "intent":"...",
