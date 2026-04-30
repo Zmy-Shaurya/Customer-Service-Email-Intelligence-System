@@ -10,13 +10,12 @@ MY_GEMINI_MODEL = "gemini-2.5-flash-lite"
 def analyse_email(email_body):
     prompt=f"""
         Analyze the following customer email and return a STRICT JSON.
-        Allowed intents:
-        -refund
-        -complain
-        -delivery issue
-        - cancellation
-        -general inquiry
-        --promotional
+        You MUST choose ONE intent from this EXACT list (do not invent new ones):
+        - Refund
+        - Technical Support
+        - Delivery Issue
+        - General Inquiry
+        
         Sentiment must be:
         - positive
         -neutral
