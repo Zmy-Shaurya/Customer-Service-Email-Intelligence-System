@@ -18,10 +18,17 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s"
 )
 
+import os
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+
+# Render provides postgres:// but SQLAlchemy requires postgresql://
+db_url = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = "super-secret-key-change-in-production"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "super-secret-key-change-in-production")
 
 db.init_app(app)
 

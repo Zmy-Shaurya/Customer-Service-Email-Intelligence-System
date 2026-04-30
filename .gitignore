@@ -1,21 +1,35 @@
-# Python
-__pycache__
-*.pyc
-.venv/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Environment
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables
 .env
 
 # Database
-instance/app.db
+instance/
+*.sqlite3
+*.db
 
 # Logs
 logs.log
+*.log
 
 # Gmail credentials (VERY IMPORTANT)
 credentials.json
 token.json
 
+# IDE / OS specific files
+.vscode/
+.idea/
+.DS_Store
 
+# Project notes
 todo.md
 project_context.md

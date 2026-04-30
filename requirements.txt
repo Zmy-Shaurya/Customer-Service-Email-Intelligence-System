@@ -1,5 +1,6 @@
 Flask
 Flask-SQLAlchemy
+Flask-Login
 bcrypt
 gunicorn
 openai
@@ -8,3 +9,4 @@ google-genai
 google-auth
 google-auth-oauthlib 
 google-api-python-client
+psycopg2-binary

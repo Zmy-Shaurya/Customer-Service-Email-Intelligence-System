@@ -19,6 +19,13 @@ def get_gmail_service():
     token_path = Path("token.json")
     credentials_path = Path("credentials.json")
 
+    import os
+    # For serverless / ephemeral platforms (Render, Vercel)
+    if "GMAIL_TOKEN_JSON" in os.environ:
+        token_path.write_text(os.environ["GMAIL_TOKEN_JSON"], encoding="utf-8")
+    if "GMAIL_CREDENTIALS_JSON" in os.environ:
+        credentials_path.write_text(os.environ["GMAIL_CREDENTIALS_JSON"], encoding="utf-8")
+
     if token_path.exists():
         creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
 
