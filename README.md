@@ -68,10 +68,10 @@ Open `http://127.0.0.1:5000` in your browser.
 
 This application is fully optimized for cloud deployments requiring ephemeral storage solutions. Instead of relying on local files for Google Authentication, the system dynamically generates `token.json` from Environment Variables upon boot.
 
-For a comprehensive step-by-step guide on deploying to Render using a free PostgreSQL database, please see our [Deployment Guide](DEPLOYMENT_GUIDE.md).
+For a comprehensive step-by-step guide on deploying to Render using a free PostgreSQL database, please see our [Deployment Guide](docs/DEPLOYMENT_GUIDE.md).
 
 ---
 
 ## 🎓 Academic / Team Reference
 
-If you are a team member preparing for a project defense or technical examination on this system, please review the [Team Exam Prep Guide](TEAM_EXAM_PREP_GUIDE.md) for a detailed breakdown of the system architecture and designated roles.
+If you are a team member preparing for a project defense or technical examination on this system, please review the [Team Exam Prep Guide](docs/TEAM_EXAM_PREP_GUIDE.md) for a detailed breakdown of the system architecture and designated roles.
